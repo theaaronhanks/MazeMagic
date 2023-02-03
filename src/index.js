@@ -31,22 +31,7 @@ function maze(size) {
                 inMaze: false
             });
         }
-    }
-    let verticalWalls = []
-    for(let i=0; i<mazeSize-1; i++){
-        verticalWalls[i] = [];
-        for(let j=0; j<mazeSize; j++){
-            verticalWalls[i][j] = true;
-        }
-    }
-    let horizontalWalls = []
-    for(let i=0; i<mazeSize; i++){
-        horizontalWalls[i] = [];
-        for(let j=0; j<mazeSize-1; j++){
-            horizontalWalls[i][j] = true;
-        }
-    }
-    
+    }    
 
     that.getCell = function(x, y) {
         return cells[x][y]
@@ -125,45 +110,6 @@ function maze(size) {
 
         let cellWidth = width / mazeSize;
         let cellHeight = height / mazeSize;
-
-        // context.moveTo(0,0);
-        // context.lineTo(width, 0);
-        // context.lineTo(width, height);
-        // context.lineTo(0, height);
-        // context.lineTo(0,0);
-
-        // for(let i=0; i<verticalWalls.length; i++) {
-        //     for(let j=0; j<verticalWalls[i].length; j++) { 
-        //         if(verticalWalls[i][j]) {
-        //             context.moveTo((i + 1) * cellWidth, j * cellHeight);
-        //             context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight);
-        //         }
-        //     }
-        // }
-        // console.log(horizontalWalls);
-        // for(let i=0; i<horizontalWalls.length; i++) {
-        //     for(let j=0; j<horizontalWalls[i].length; j++) { 
-        //         if(horizontalWalls[i][j]) {
-        //             context.moveTo(i * cellWidth, (j + 1) * cellHeight)
-        //             context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight)
-        //         }
-        //     }
-        // }
-
-
-
-        // context.moveTo(1 * cellWidth, 1 * cellHeight);
-        // context.lineTo(2 * cellWidth, 1 * cellHeight);
-
-        // context.moveTo(2 * cellWidth, 1 * cellHeight);
-        // context.lineTo(2 * cellWidth, 2 * cellHeight);
-
-        // context.moveTo(1 * cellWidth, 2 * cellHeight);
-        // context.lineTo(2 * cellWidth, 2 * cellHeight);
-
-        // context.moveTo(1 * cellWidth, 1 * cellHeight);
-        // context.lineTo(1 * cellWidth, 2 * cellHeight);
-
 
         for(let i=0; i<mazeSize; i++) {
             for(let j=0; j<mazeSize; j++) {
