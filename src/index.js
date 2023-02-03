@@ -32,6 +32,21 @@ function maze(size) {
             });
         }
     }
+    let verticalWalls = []
+    for(let i=0; i<mazeSize-1; i++){
+        verticalWalls[i] = [];
+        for(let j=0; j<mazeSize; j++){
+            verticalWalls[i][j] = true;
+        }
+    }
+    let horizontalWalls = []
+    for(let i=0; i<mazeSize; i++){
+        horizontalWalls[i] = [];
+        for(let j=0; j<mazeSize-1; j++){
+            horizontalWalls[i][j] = true;
+        }
+    }
+    
 
     that.getCell = function(x, y) {
         return cells[x][y]
@@ -87,19 +102,19 @@ function maze(size) {
     
                 if (coordinates.x === connectionCoords.x) {
                     if (coordinates.y > connectionCoords.y) {
-                        nextCell.breakWall("west");
-                        connectionCell.breakWall("east");
+                        nextCell.breakWall("north");
+                        connectionCell.breakWall("south");
                     } else if (coordinates.y < connectionCoords.y) {
-                        nextCell.breakWall("east");
-                        connectionCell.breakWall("west");
+                        nextCell.breakWall("south");
+                        connectionCell.breakWall("north");
                     }
                 } else if (coordinates.y === connectionCoords.y) {
                     if (coordinates.x > connectionCoords.x) {
-                        nextCell.breakWall("north");
-                        connectionCell.breakWall("south");
+                        nextCell.breakWall("west");
+                        connectionCell.breakWall("east");
                     } else if (coordinates.x < connectionCoords.x) {
-                        nextCell.breakWall("south");
-                        connectionCell.breakWall("north");
+                        nextCell.breakWall("east");
+                        connectionCell.breakWall("west");
                     }
                 }
             }
@@ -116,6 +131,27 @@ function maze(size) {
         // context.lineTo(width, height);
         // context.lineTo(0, height);
         // context.lineTo(0,0);
+
+        // for(let i=0; i<verticalWalls.length; i++) {
+        //     for(let j=0; j<verticalWalls[i].length; j++) { 
+        //         if(verticalWalls[i][j]) {
+        //             context.moveTo((i + 1) * cellWidth, j * cellHeight);
+        //             context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight);
+        //         }
+        //     }
+        // }
+        // console.log(horizontalWalls);
+        // for(let i=0; i<horizontalWalls.length; i++) {
+        //     for(let j=0; j<horizontalWalls[i].length; j++) { 
+        //         if(horizontalWalls[i][j]) {
+        //             context.moveTo(i * cellWidth, (j + 1) * cellHeight)
+        //             context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight)
+        //         }
+        //     }
+        // }
+
+
+
         // context.moveTo(1 * cellWidth, 1 * cellHeight);
         // context.lineTo(2 * cellWidth, 1 * cellHeight);
 
@@ -152,7 +188,7 @@ function maze(size) {
             }
         }
 
-        context.lineWidth = 2;
+        context.lineWidth = 4;
         context.strokeStyle = 'rgba(255, 0, 0, 1)';
         context.stroke();
     }
@@ -165,7 +201,7 @@ window.onload = (event) => {
     let canvas = document.getElementById('id-canvas');
     let context = canvas.getContext('2d');
     
-    let mymaze = maze(3);
+    let mymaze = maze(20);
     mymaze.generate();
     mymaze.draw(canvas.width, canvas.height, context);
 };
