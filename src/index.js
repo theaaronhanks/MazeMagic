@@ -38,6 +38,14 @@ function maze(size) {
             horizontalWalls[i][j] = true;
         }
     }
+
+    that.breakHorizWall = function(x, y) {
+        horizontalWalls[x][y] = false;
+    }
+
+    that.breakVertWall = function(x, y) {
+        verticalWalls[x][y] = false;
+    }
     
 
     that.getCell = function(x, y) {
@@ -90,19 +98,18 @@ function maze(size) {
             if (mazeNeighbors.length > 0) {
                 let connectionIndex = Math.floor(Math.random() * mazeNeighbors.length)
                 let connectionCoords = mazeNeighbors[connectionIndex];
-                let connectionCell = that.getCell(connectionCoords.x, connectionCoords.y);
     
                 if (coordinates.x === connectionCoords.x) {
                     if (coordinates.y > connectionCoords.y) {
-
+                        that.breakHorizWall(coordinates.x, connectionCoords.y);
                     } else if (coordinates.y < connectionCoords.y) {
-
+                        that.breakHorizWall(coordinates.x, coordinates.y);
                     }
                 } else if (coordinates.y === connectionCoords.y) {
                     if (coordinates.x > connectionCoords.x) {
-
+                        that.breakVertWall(connectionCoords.x, coordinates.y);
                     } else if (coordinates.x < connectionCoords.x) {
-
+                        that.breakVertWall(coordinates.x, coordinates.y);
                     }
                 }
             }
