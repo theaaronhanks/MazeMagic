@@ -10,10 +10,10 @@ function cell(spec) {
     return that;
 }
 
-function maze(size) {
+function maze(spec) {
     let that = {};
 
-    let mazeSize = size;
+    let mazeSize = spec.size;
     let cells = [];
     for(let i=0; i<mazeSize; i++) {
         cells[i] = [];
@@ -117,9 +117,13 @@ function maze(size) {
     }
 
     that.draw = function(width, height, context) {
-
+        console.log("rendering");
         let cellWidth = width / mazeSize;
         let cellHeight = height / mazeSize;
+
+        console.log(verticalWalls);
+
+        context.clearRect(0, 0, width, height);
 
         context.moveTo(0,0);
         context.lineTo(width, 0);
@@ -135,7 +139,6 @@ function maze(size) {
                 }
             }
         }
-        console.log(horizontalWalls);
         for(let i=0; i<horizontalWalls.length; i++) {
             for(let j=0; j<horizontalWalls[i].length; j++) { 
                 if(horizontalWalls[i][j]) {
@@ -153,13 +156,48 @@ function maze(size) {
     return that;
 }
 
+function game(canvas, context, maze) {
+    maze.generate();
+    maze.draw(canvas.width, canvas.height, context);
+}
+
+function start(e, myMaze, canvas, context) {
+    console.log("started!")
+    console.log(e.submitter.value)
+
+    myMaze = maze({size: e.submitter.value});
+    game(canvas, context, myMaze);
+
+    // let game = document.getElementById('game');
+    // game.classList.remove("hidden");
+    // let menu = document.getElementById('menu');
+    // menu.classList.add("hidden")
+
+    e.preventDefault()
+}
+
+function reset(myMaze, canvas, context) {
+
+    myMaze = {}
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // let game = document.getElementById('game');
+    // game.classList.add("hidden");
+    // let menu = document.getElementById('menu');
+    // menu.classList.remove("hidden")
+}
+
 window.onload = (event) => {
     console.log("page is fully loaded");
+
+    let myMaze = {}
     let canvas = document.getElementById('id-canvas');
     let context = canvas.getContext('2d');
-    
-    let mymaze = maze(20);
-    mymaze.generate();
-    mymaze.draw(canvas.width, canvas.height, context);
+
+    let menu = document.getElementById("menuForm")
+    menu.addEventListener("submit", (e) => start(e, myMaze, canvas, context));
+
+    let back = document.getElementById("quit");
+    back.addEventListener("click", () => reset(myMaze, canvas, context))
 };
 

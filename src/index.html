@@ -6,16 +6,37 @@
     <title>Maze Magic</title>
 </head>
 <body>
-    <header>
-        <h1>Maze Magic</h1>
-    </header>
-    
-    <div class="gameBody">
-        <canvas id = "id-canvas" width = "500" height = "500"></canvas>
-    </div>
+    <div class="background">
+        <div id="menu" class="menu">
+            <h1>Welcome to Maze Magic!</h1>
+            <p>
+                Please select the size of maze you would like to play.
+            </p>
+            <form id="menuForm">
+                <button value="5">5</button>
+                <button value="10">10</button>
+                <button value="15">15</button>
+                <button value="20">20</button>
+            </form>
+        </div>
+        
+        <div id="game" class="gameBody">
+            <div class="gameBox">
+                <p>Your Score: <span id="score"></span> </p>
+                <p>Time: <span id="time"></span></p>
+                <button id="quit">Quit</button>
+            </div>
+            <div class="mazeBox">
+                <canvas id="id-canvas" width = "500" height = "500"></canvas>
+                
+            </div>
+            <div class="gameBox">
+                <p>
+                    testing ajofewfj;ofajew;oifjew oifewjofjewa;ofa;oefijoiewaja
+                </p>
+            </div>
 
-    <footer>
-        <p>Created for CS5410</p>
-    </footer>
+        </div> 
+    </div>
 </body>
 </html>
