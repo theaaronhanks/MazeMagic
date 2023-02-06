@@ -5,8 +5,6 @@ function cell(spec) {
     
     that.getX = function() { return spec.coordinates.x; }
     that.getY = function() { return spec.coordinates.y; }
-    that.breakWall = function(wall) { spec.walls[wall] = false; }
-    that.getWall = function(wall) { return spec.walls[wall]; }
     that.inMaze = function() { return spec.inMaze; }
     that.addToMaze = function() { spec.inMaze = true; }
     return that;
@@ -22,16 +20,33 @@ function maze(size) {
         for(let j=0; j<mazeSize; j++) {
             cells[i][j] = cell({
                 coordinates: { x: i, y: j },
-                walls: { 
-                    north: true,
-                    east: true, 
-                    south: true,
-                    west: true,
-                },
                 inMaze: false
             });
         }
-    }    
+    }
+    let verticalWalls = []
+    for(let i=0; i<mazeSize-1; i++){
+        verticalWalls[i] = [];
+        for(let j=0; j<mazeSize; j++){
+            verticalWalls[i][j] = true;
+        }
+    }
+    let horizontalWalls = []
+    for(let i=0; i<mazeSize; i++){
+        horizontalWalls[i] = [];
+        for(let j=0; j<mazeSize-1; j++){
+            horizontalWalls[i][j] = true;
+        }
+    }
+
+    that.breakHorizWall = function(x, y) {
+        horizontalWalls[x][y] = false;
+    }
+
+    that.breakVertWall = function(x, y) {
+        verticalWalls[x][y] = false;
+    }
+    
 
     that.getCell = function(x, y) {
         return cells[x][y]
@@ -83,23 +98,18 @@ function maze(size) {
             if (mazeNeighbors.length > 0) {
                 let connectionIndex = Math.floor(Math.random() * mazeNeighbors.length)
                 let connectionCoords = mazeNeighbors[connectionIndex];
-                let connectionCell = that.getCell(connectionCoords.x, connectionCoords.y);
     
                 if (coordinates.x === connectionCoords.x) {
                     if (coordinates.y > connectionCoords.y) {
-                        nextCell.breakWall("north");
-                        connectionCell.breakWall("south");
+                        that.breakHorizWall(coordinates.x, connectionCoords.y);
                     } else if (coordinates.y < connectionCoords.y) {
-                        nextCell.breakWall("south");
-                        connectionCell.breakWall("north");
+                        that.breakHorizWall(coordinates.x, coordinates.y);
                     }
                 } else if (coordinates.y === connectionCoords.y) {
                     if (coordinates.x > connectionCoords.x) {
-                        nextCell.breakWall("west");
-                        connectionCell.breakWall("east");
+                        that.breakVertWall(connectionCoords.x, coordinates.y);
                     } else if (coordinates.x < connectionCoords.x) {
-                        nextCell.breakWall("east");
-                        connectionCell.breakWall("west");
+                        that.breakVertWall(coordinates.x, coordinates.y);
                     }
                 }
             }
@@ -111,25 +121,26 @@ function maze(size) {
         let cellWidth = width / mazeSize;
         let cellHeight = height / mazeSize;
 
-        for(let i=0; i<mazeSize; i++) {
-            for(let j=0; j<mazeSize; j++) {
-                let cell = that.getCell(i, j);
-                
-                if (cell.getWall("north")) { 
-                    context.moveTo(i * cellWidth, j * cellHeight)
-                    context.lineTo((i + 1) * cellWidth, j * cellHeight)
+        context.moveTo(0,0);
+        context.lineTo(width, 0);
+        context.lineTo(width, height);
+        context.lineTo(0, height);
+        context.lineTo(0,0);
+
+        for(let i=0; i<verticalWalls.length; i++) {
+            for(let j=0; j<verticalWalls[i].length; j++) { 
+                if(verticalWalls[i][j]) {
+                    context.moveTo((i + 1) * cellWidth, j * cellHeight);
+                    context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight);
                 }
-                if (cell.getWall("east")) { 
-                    context.moveTo((i + 1) * cellWidth, j * cellHeight)
-                    context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight)
-                }
-                if (cell.getWall("south")) { 
+            }
+        }
+        console.log(horizontalWalls);
+        for(let i=0; i<horizontalWalls.length; i++) {
+            for(let j=0; j<horizontalWalls[i].length; j++) { 
+                if(horizontalWalls[i][j]) {
                     context.moveTo(i * cellWidth, (j + 1) * cellHeight)
                     context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight)
-                }
-                if (cell.getWall("west")) { 
-                    context.moveTo(i * cellWidth, j * cellHeight)
-                    context.lineTo(i * cellWidth, (j + 1) * cellHeight)
                 }
             }
         }
