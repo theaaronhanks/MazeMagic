@@ -25,13 +25,13 @@ function maze(spec) {
         }
     }
     let verticalWalls = []
+    let horizontalWalls = []
     for(let i=0; i<mazeSize-1; i++){
         verticalWalls[i] = [];
         for(let j=0; j<mazeSize; j++){
             verticalWalls[i][j] = true;
         }
     }
-    let horizontalWalls = []
     for(let i=0; i<mazeSize; i++){
         horizontalWalls[i] = [];
         for(let j=0; j<mazeSize-1; j++){
@@ -117,13 +117,12 @@ function maze(spec) {
     }
 
     that.draw = function(width, height, context) {
-        console.log("rendering");
         let cellWidth = width / mazeSize;
         let cellHeight = height / mazeSize;
 
-        console.log(verticalWalls);
-
         context.clearRect(0, 0, width, height);
+
+        context.beginPath();
 
         context.moveTo(0,0);
         context.lineTo(width, 0);
@@ -148,6 +147,7 @@ function maze(spec) {
             }
         }
 
+        context.closePath();
         context.lineWidth = 4;
         context.strokeStyle = 'rgba(255, 0, 0, 1)';
         context.stroke();
@@ -156,48 +156,88 @@ function maze(spec) {
     return that;
 }
 
-function game(canvas, context, maze) {
-    maze.generate();
-    maze.draw(canvas.width, canvas.height, context);
+function GameModel() {
+    let that = {};
+
+    let state = "menu"
+
+    that.getState = function() {
+        return state;
+    }
+
+    that.setState = function(newState) {
+        if (newState == "menu" || newState == "game") {
+            state = newState;
+        }
+    }
+
+    that.processInput = function(elapsedTime) {
+        console.log(elapsedTime);
+    }
+
+    that.update = function(elapsedTime) {
+        console.log(elapsedTime);
+    }
+
+    that.render = function() {
+
+    }
+
+    return that;
 }
 
-function start(e, myMaze, canvas, context) {
-    console.log("started!")
-    console.log(e.submitter.value)
 
-    myMaze = maze({size: e.submitter.value});
-    game(canvas, context, myMaze);
 
-    // let game = document.getElementById('game');
-    // game.classList.remove("hidden");
-    // let menu = document.getElementById('menu');
-    // menu.classList.add("hidden")
-
-    e.preventDefault()
+function processInput(elapsedTime) {
+    gameModel.processInput(elapsedTime);
 }
 
-function reset(myMaze, canvas, context) {
-
-    myMaze = {}
-    context.clearRect(0, 0, canvas.width, canvas.height);
-
-    // let game = document.getElementById('game');
-    // game.classList.add("hidden");
-    // let menu = document.getElementById('menu');
-    // menu.classList.remove("hidden")
+function update(elapsedTime) {
+    gameModel.update(elapsedTime);
 }
 
-window.onload = (event) => {
-    console.log("page is fully loaded");
+function render() {
+    gameModel.render();
+}
 
-    let myMaze = {}
+function gameLoop(timeStamp) {
+    let elapsedTime = timeStamp - prevTime;
+    prevTime = timeStamp;
+
+    processInput(elapsedTime);
+    update(elapsedTime);
+    render();
+    if (gameModel.getState() == "game"){
+        requestAnimationFrame(gameLoop);
+    }
+}
+
+
+function start(size) {
     let canvas = document.getElementById('id-canvas');
     let context = canvas.getContext('2d');
 
-    let menu = document.getElementById("menuForm")
-    menu.addEventListener("submit", (e) => start(e, myMaze, canvas, context));
+    let myMaze = maze({ size });
+    myMaze.generate();
+    myMaze.draw(canvas.width, canvas.height, context);
+    
+    let myGame = document.getElementById('game');
+    myGame.classList.remove("hidden");
+    let myMenu = document.getElementById('menu');
+    myMenu.classList.add("hidden");
+    
+    gameModel.setState("game")
+    gameLoop(prevTime)
+}
 
-    let back = document.getElementById("quit");
-    back.addEventListener("click", () => reset(myMaze, canvas, context))
-};
+function reset() {
+    gameModel.setState("menu")
+    
+    let game = document.getElementById('game');
+    game.classList.add("hidden");
+    let menu = document.getElementById('menu');
+    menu.classList.remove("hidden");
+}
 
+let gameModel = GameModel();
+let prevTime = performance.now();

@@ -12,27 +12,32 @@
             <p>
                 Please select the size of maze you would like to play.
             </p>
-            <form id="menuForm">
-                <button value="5">5</button>
-                <button value="10">10</button>
-                <button value="15">15</button>
-                <button value="20">20</button>
-            </form>
+            <button onclick="start(5)">5</button>
+            <button onclick="start(10)">10</button>
+            <button onclick="start(15)">15</button>
+            <button onclick="start(20)">20</button>
         </div>
         
-        <div id="game" class="gameBody">
+        <div id="game" class="gameBody hidden">
             <div class="gameBox">
                 <p>Your Score: <span id="score"></span> </p>
                 <p>Time: <span id="time"></span></p>
-                <button id="quit">Quit</button>
+                <button id="quit" onclick="reset()">Quit</button>
             </div>
             <div class="mazeBox">
                 <canvas id="id-canvas" width = "500" height = "500"></canvas>
                 
             </div>
             <div class="gameBox">
+                <h4>Shortcuts</h4>
                 <p>
-                    testing ajofewfj;ofajew;oifjew oifewjofjewa;ofa;oefijoiewaja
+                    b: breadcrumbs
+                </p>
+                <p>
+                    h: hint
+                </p>
+                <p>
+                    p: fastest path
                 </p>
             </div>
 

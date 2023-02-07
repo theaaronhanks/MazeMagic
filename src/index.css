@@ -36,7 +36,7 @@ body {
     height: 100vh;
     max-width: 100%;
     width: 100vw;
-    background-color: blue;
+    background-color: darkslategray;
 }
 
 .menu {
@@ -75,7 +75,7 @@ button {
     justify-content: center;
     border-style: solid;
     padding: 16px;
-    width: 25%;
+    width: 15vw;
 }
 
 .mazeBox {
