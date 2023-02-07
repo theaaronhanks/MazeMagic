@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="index.css">
-    <script src="index.js"></script>
+    <script src="scripts/maze.js" async></script>
+    <script src="scripts/player.js" async></script>
+    <script src="scripts/utils.js" defer></script>
+    <script src="scripts/GameModel.js" defer></script>
+    <script src="scripts/gameloop.js" defer></script>
+    <script src="scripts/index.js" defer></script>
     <title>Maze Magic</title>
 </head>
+
 <body>
     <div class="background">
         <div id="menu" class="menu">
@@ -17,16 +24,19 @@
             <button onclick="start(15)">15</button>
             <button onclick="start(20)">20</button>
         </div>
-        
+
         <div id="game" class="gameBody hidden">
             <div class="gameBox">
                 <p>Your Score: <span id="score"></span> </p>
                 <p>Time: <span id="time"></span></p>
                 <button id="quit" onclick="reset()">Quit</button>
+                <div id="high-scores">
+                    <h4>High Scores</h4>
+                </div>
             </div>
             <div class="mazeBox">
-                <canvas id="id-canvas" width = "500" height = "500"></canvas>
-                
+                <canvas id="id-canvas" width="500" height="500"></canvas>
+
             </div>
             <div class="gameBox">
                 <h4>Shortcuts</h4>
@@ -41,7 +51,8 @@
                 </p>
             </div>
 
-        </div> 
+        </div>
     </div>
 </body>
+
 </html>

@@ -31,7 +31,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;    
+    align-items: center;
     max-height: 100%;
     height: 100vh;
     max-width: 100%;
@@ -48,7 +48,7 @@ body {
     align-items: center;
     border-style: solid;
     border-radius: 16px;
-    border-color: black;  
+    border-color: black;
 }
 
 form {
@@ -74,6 +74,8 @@ button {
     flex-direction: column;
     justify-content: center;
     border-style: solid;
+    border-color: black;
+    color: aliceblue ;
     padding: 16px;
     width: 15vw;
 }
@@ -81,4 +83,8 @@ button {
 .mazeBox {
     border-style: solid;
     padding: 16px;
+}
+
+#high-scores {
+    
 }
