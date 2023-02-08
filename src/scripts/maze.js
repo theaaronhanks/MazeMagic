@@ -18,6 +18,7 @@ function maze(spec) {
     for (let i = 0; i < mazeSize; i++) {
         cells[i] = [];
         for (let j = 0; j < mazeSize; j++) {
+            // give cells references to neighbors? null means wall, cell means opening
             cells[i][j] = cell({
                 coordinates: { x: i, y: j },
                 inMaze: false

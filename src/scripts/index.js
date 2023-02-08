@@ -5,28 +5,31 @@ let prevTime = 0;
 
 function start(size) {
 
-    let myMaze = maze({ size });
-    myMaze.generate();
+    let newMaze = maze({ size });
+    newMaze.generate();
 
-    let myPlayer = player({ size });
+    let newPlayer = player({ size });
 
-    let myGame = document.getElementById('game');
-    myGame.classList.remove("hidden");
-    let myMenu = document.getElementById('menu');
-    myMenu.classList.add("hidden");
+    let gameScreen = document.getElementById('game');
+    gameScreen.classList.remove("hidden");
+    let menuScreen = document.getElementById('menu');
+    menuScreen.classList.add("hidden");
 
-    gameModel.startGame(myMaze, myPlayer);
+    gameModel.startNewGame(newMaze, newPlayer);
     prevTime = performance.now();
     gameLoop(prevTime);
+
+    //when calculating shortest path, use a stack
 }
 
 function reset() {
     gameModel.reset();
 
-    let game = document.getElementById('game');
-    game.classList.add("hidden");
-    let menu = document.getElementById('menu');
-    menu.classList.remove("hidden");
+    // rename to screens
+    let gameScreen = document.getElementById('game');
+    gameScreen.classList.add("hidden");
+    let menuScreen = document.getElementById('menu');
+    menuScreen.classList.remove("hidden");
 }
 
 

@@ -2,17 +2,17 @@
 function player(spec) {
     let that = {}
 
-    let position = {x: 0, y: 0}
+    let location = {x: 0, y: 0}
     let score = 0;
     let rotation = 90
     let size = spec.size;
 
     that.getX = function() {
-        return position.x;
+        return location.x;
     }
 
     that.getY = function() {
-        return position.y;
+        return location.y;
     }
 
     that.getRotation = function() {
