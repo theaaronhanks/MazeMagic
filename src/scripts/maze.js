@@ -19,41 +19,18 @@ function maze(spec) {
         cells[i] = [];
         for (let j = 0; j < mazeSize; j++) {
             // give cells references to neighbors? null means wall, cell means opening
-            cells[i][j] = cell({
-                coordinates: { x: i, y: j },
+            cells[i][j] = {
+                x: i, 
+                y: j, 
+                edges: {
+                    n: null,
+                    s: null,
+                    w: null,
+                    e: null
+                },
                 inMaze: false
-            });
+            };
         }
-    }
-    let verticalWalls = []
-    let horizontalWalls = []
-    for (let i = 0; i < mazeSize - 1; i++) {
-        verticalWalls[i] = [];
-        for (let j = 0; j < mazeSize; j++) {
-            verticalWalls[i][j] = true;
-        }
-    }
-    for (let i = 0; i < mazeSize; i++) {
-        horizontalWalls[i] = [];
-        for (let j = 0; j < mazeSize - 1; j++) {
-            horizontalWalls[i][j] = true;
-        }
-    }
-
-    that.getVertWalls = function () {
-        return verticalWalls;
-    }
-
-    that.getHorizWalls = function () {
-        return horizontalWalls;
-    }
-
-    that.breakHorizWall = function (x, y) {
-        horizontalWalls[x][y] = false;
-    }
-
-    that.breakVertWall = function (x, y) {
-        verticalWalls[x][y] = false;
     }
 
     that.getSize = function () {
@@ -74,10 +51,10 @@ function maze(spec) {
             let coordinates = frontier.splice(index, 1)[0]
 
             let nextCell = that.getCell(coordinates.x, coordinates.y);
-            if (nextCell.inMaze()) {
+            if (nextCell.inMaze) {
                 continue;
             }
-            nextCell.addToMaze();
+            nextCell.inMaze = true;
 
             let neighbors = [
                 { x: coordinates.x - 1, y: coordinates.y },
@@ -100,8 +77,8 @@ function maze(spec) {
                 }
 
                 let neighborCell = that.getCell(x, y);
-                if (neighborCell.inMaze()) {
-                    mazeNeighbors.push({ x, y })
+                if (neighborCell.inMaze) {
+                    mazeNeighbors.push(neighborCell)
                 } else {
                     frontier.push({ x, y })
                 }
@@ -109,19 +86,23 @@ function maze(spec) {
 
             if (mazeNeighbors.length > 0) {
                 let connectionIndex = Math.floor(Math.random() * mazeNeighbors.length)
-                let connectionCoords = mazeNeighbors[connectionIndex];
+                let neighborCell = mazeNeighbors[connectionIndex];
 
-                if (coordinates.x === connectionCoords.x) {
-                    if (coordinates.y > connectionCoords.y) {
-                        that.breakHorizWall(coordinates.x, connectionCoords.y);
-                    } else if (coordinates.y < connectionCoords.y) {
-                        that.breakHorizWall(coordinates.x, coordinates.y);
+                if (nextCell.x === neighborCell.x) {
+                    if (nextCell.y > neighborCell.y) {
+                        nextCell.edges.n = neighborCell;
+                        neighborCell.edges.s = nextCell;
+                    } else if (nextCell.y < neighborCell.y) {
+                        nextCell.edges.s = neighborCell;
+                        neighborCell.edges.n = nextCell;
                     }
-                } else if (coordinates.y === connectionCoords.y) {
-                    if (coordinates.x > connectionCoords.x) {
-                        that.breakVertWall(connectionCoords.x, coordinates.y);
-                    } else if (coordinates.x < connectionCoords.x) {
-                        that.breakVertWall(coordinates.x, coordinates.y);
+                } else if (nextCell.y === neighborCell.y) {
+                    if (nextCell.x > neighborCell.x) {
+                        nextCell.edges.w = neighborCell;
+                        neighborCell.edges.e = nextCell;
+                    } else if (nextCell.x < neighborCell.x) {
+                        nextCell.edges.e = neighborCell;
+                        neighborCell.edges.w = nextCell 
                     }
                 }
             }

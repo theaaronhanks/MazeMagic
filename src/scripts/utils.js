@@ -64,14 +64,40 @@ let Graphics = (function () {
     function clear() {
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
+
     function Maze(maze) {
         let mazeSize = maze.getSize();
-        let verticalWalls = maze.getVertWalls();
-        let horizontalWalls = maze.getHorizWalls();
         let cellWidth = canvas.width / mazeSize;
         let cellHeight = canvas.height / mazeSize;
 
+        function drawCell(cell){
+            if (cell.edges.n === null) {
+                context.moveTo(cell.x * cellWidth, cell.y * cellHeight);
+                context.lineTo((cell.x + 1) * cellWidth, cell.y * cellHeight);
+            }
+        
+            if (cell.edges.s === null) {
+                context.moveTo(cell.x * cellWidth, (cell.y + 1) * cellHeight);
+                context.lineTo((cell.x + 1) * cellWidth, (cell.y + 1) * cellHeight);
+            }
+        
+            if (cell.edges.e === null) {
+                context.moveTo((cell.x + 1) * cellWidth, cell.y * cellHeight);
+                context.lineTo((cell.x + 1) * cellWidth, (cell.y + 1) * cellHeight);
+            }
+        
+            if (cell.edges.w === null) {
+                context.moveTo(cell.x * cellWidth, cell.y * cellHeight);
+                context.lineTo(cell.x * cellWidth, (cell.y + 1) * cellHeight);
+            }
+        }
+
         context.beginPath();
+        for (let row = 0; row < mazeSize; row++) {
+            for (let col = 0; col < mazeSize; col++) {
+                drawCell(maze.getCell(row, col));
+            }
+        }
 
         context.moveTo(0, 0);
         context.lineTo(canvas.width, 0);
@@ -79,25 +105,8 @@ let Graphics = (function () {
         context.lineTo(0, canvas.height);
         context.lineTo(0, 0);
 
-        for (let i = 0; i < verticalWalls.length; i++) {
-            for (let j = 0; j < verticalWalls[i].length; j++) {
-                if (verticalWalls[i][j]) {
-                    context.moveTo((i + 1) * cellWidth, j * cellHeight);
-                    context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight);
-                }
-            }
-        }
-        for (let i = 0; i < horizontalWalls.length; i++) {
-            for (let j = 0; j < horizontalWalls[i].length; j++) {
-                if (horizontalWalls[i][j]) {
-                    context.moveTo(i * cellWidth, (j + 1) * cellHeight)
-                    context.lineTo((i + 1) * cellWidth, (j + 1) * cellHeight)
-                }
-            }
-        }
-
-        context.closePath();
         context.lineWidth = 4;
+        context.closePath();
         context.strokeStyle = 'rgba(255, 255, 50, 1)';
         context.stroke();
 
