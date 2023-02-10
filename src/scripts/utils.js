@@ -61,6 +61,28 @@ let Graphics = (function () {
     let canvas = document.getElementById('id-canvas');
     let context = canvas.getContext('2d');
 
+    let breadcrumbs = false;
+    let hint = false;
+    let path = false;
+
+    function reset() {
+        breadcrumbs = false;
+        hint = false;
+        path = false;
+    }
+
+    function toggleCrumbs() {
+        breadcrumbs = !breadcrumbs;
+    }
+
+    function toggleHint() {
+        hint = !hint;
+    }
+
+    function togglePath() {
+        path = !path;
+    }
+
     function clear() {
         context.clearRect(0, 0, canvas.width, canvas.height);
     }
@@ -90,6 +112,19 @@ let Graphics = (function () {
                 context.moveTo(cell.x * cellWidth, cell.y * cellHeight);
                 context.lineTo(cell.x * cellWidth, (cell.y + 1) * cellHeight);
             }
+            if (hint && cell == maze.getHint()) {
+                context.fillStyle = 'rgba(255, 50, 50, 1)';
+                context.fillRect(cell.x * cellWidth + (cellWidth / 3),  cell.y * cellHeight + (cellHeight / 3), cellWidth / 3, cellHeight / 3)
+                context.fill();
+            }else if (path && cell.inPath) {
+                context.fillStyle = 'rgba(50, 255, 50, 1)';
+                context.fillRect(cell.x * cellWidth + (cellWidth / 3),  cell.y * cellHeight + (cellHeight / 3), cellWidth / 3, cellHeight / 3)
+                context.fill();
+            } else if (cell.entered && breadcrumbs) {
+                context.fillStyle = 'rgba(255, 255, 50, 1)';
+                context.fillRect(cell.x * cellWidth + (cellWidth / 3),  cell.y * cellHeight + (cellHeight / 3), cellWidth / 3, cellHeight / 3)
+                context.fill();
+            }
         }
 
         context.beginPath();
@@ -107,6 +142,7 @@ let Graphics = (function () {
 
         context.lineWidth = 4;
         context.closePath();
+        context.fillStyle = 'rgba(255, 255, 50, 1)';
         context.strokeStyle = 'rgba(255, 255, 50, 1)';
         context.stroke();
 
@@ -132,6 +168,10 @@ let Graphics = (function () {
         clear,
         Maze,
         Texture,
+        reset,
+        toggleCrumbs,
+        toggleHint,
+        togglePath,
         width: canvas.width,
         height: canvas.height
     };

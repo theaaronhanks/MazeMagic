@@ -49,6 +49,8 @@ body {
     border-style: solid;
     border-radius: 16px;
     border-color: black;
+    width: clamp(300px, 50vw, 500px);
+    height: clamp(500px, 50vh, 700px);
 }
 
 form {
@@ -63,6 +65,9 @@ button {
 
 .gameBody {
     display: flex;
+    justify-content: center;
+    width: clamp(750px, 1000px, 1500px);
+    height: clamp(500px, fit-content, 1000px);
 }
 
 .hidden {
@@ -85,6 +90,12 @@ button {
     padding: 16px;
 }
 
-#high-scores {
-    
+.high-scores {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-style: solid;
+    border-color: black;
+    border-radius: 16px;
 }

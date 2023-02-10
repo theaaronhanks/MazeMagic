@@ -1,24 +1,14 @@
 "use strict"
 
-function cell(spec) {
-    let that = {};
-
-    that.getX = function () { return spec.coordinates.x; }
-    that.getY = function () { return spec.coordinates.y; }
-    that.inMaze = function () { return spec.inMaze; }
-    that.addToMaze = function () { spec.inMaze = true; }
-    return that;
-}
-
 function maze(spec) {
     let that = {};
 
+    let shortestPath = [];
     let mazeSize = spec.size;
     let cells = [];
     for (let i = 0; i < mazeSize; i++) {
         cells[i] = [];
         for (let j = 0; j < mazeSize; j++) {
-            // give cells references to neighbors? null means wall, cell means opening
             cells[i][j] = {
                 x: i, 
                 y: j, 
@@ -28,9 +18,34 @@ function maze(spec) {
                     w: null,
                     e: null
                 },
-                inMaze: false
+                // these are for the maze generation and pathfinding algorithms
+                inMaze: false,
+                explored: false,
+                // these are used throughout the program
+                inPath: false, 
+                isHint: false,
+                entered: false,
             };
         }
+    }
+
+    that.getShortestPath = function () {
+        return shortestPath;
+    }
+
+    that.getHint = function () {
+        return shortestPath[shortestPath.length - 1];
+    }
+
+    that.pushToShortestPath = function (cell) {
+        shortestPath.push(cell);
+        cell.inPath = true;
+    }
+
+    that.popFromShortestPath = function () {
+        let cell = shortestPath.pop();
+        cell.inPath = false;
+        return cell;
     }
 
     that.getSize = function () {
@@ -107,6 +122,55 @@ function maze(spec) {
                 }
             }
         } while (frontier.length > 0)
+
+        computeShortestPath();
+    }
+
+    function computeShortestPath() {
+        let goal = that.getCell(mazeSize-1, mazeSize-1);
+        let Q = []
+        let pre = [];
+        that.getCell(0,0).explored = true;
+        Q.push(that.getCell(0,0));
+        do {
+            let nextCell = Q.splice(0,1)[0];
+            if (nextCell === goal) {
+                do {
+                    shortestPath.push(goal);
+                    goal.inPath = true;
+                    goal = that.getCell(Math.floor(pre[goal.x * mazeSize + goal.y] / mazeSize), pre[goal.x * mazeSize + goal.y] % mazeSize);
+                } while (goal != that.getCell(0,0))
+                return;
+            }
+            if (nextCell.edges.n) {
+                if (!nextCell.edges.n.explored) {
+                    pre[nextCell.edges.n.x * mazeSize + nextCell.edges.n.y] = nextCell.x * mazeSize + nextCell.y
+                    nextCell.edges.n.explored = true;
+                    Q.push(nextCell.edges.n);
+                }
+            }
+            if (nextCell.edges.e) {
+                if (!nextCell.edges.e.explored){
+                    pre[nextCell.edges.e.x * mazeSize + nextCell.edges.e.y] = nextCell.x * mazeSize + nextCell.y
+                    nextCell.edges.e.explored = true;
+                    Q.push(nextCell.edges.e)
+                }
+            }
+            if (nextCell.edges.s) {
+                if (!nextCell.edges.s.explored) {
+                    pre[nextCell.edges.s.x * mazeSize + nextCell.edges.s.y] = nextCell.x * mazeSize + nextCell.y
+                    nextCell.edges.s.explored = true;
+                    Q.push(nextCell.edges.s)
+                }
+            }
+            if (nextCell.edges.w) {
+                if (!nextCell.edges.w.explored) {
+                    pre[nextCell.edges.w.x * mazeSize + nextCell.edges.w.y] = nextCell.x * mazeSize + nextCell.y
+                    nextCell.edges.w.explored = true;
+                    Q.push(nextCell.edges.w)
+                }
+            }
+        } while (Q.length != 0);
     }
 
     return that;
