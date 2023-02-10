@@ -6,25 +6,101 @@ function GameModel() {
     let gameMaze = {};
     let gamePlayer = {};
     let gameTime = 0;
-    let highScores = [];
+    let highScores = {
+        5: null,
+        10: null,
+        15: null,
+        20: null,
+    };
 
     // Displays
     let timeDisplay = document.getElementById("time");
     let scoreDisplay = document.getElementById("score");
+    let highScoreDisplay = document.getElementById("high-scores");
 
+    // Input configuration
     let gameInput = Input.Keyboard();
 
     function movePlayerLeft() {
-        console.log("left");
+        if (gamePlayer.location.edges.w) {
+            gamePlayer.location.entered = true;
+            if (gamePlayer.location.edges.w.inPath) {
+                gameMaze.popFromShortestPath();
+                if (!gamePlayer.location.edges.w.entered) {
+                    gamePlayer.score += 5;
+                }
+            } else {
+                gameMaze.pushToShortestPath(gamePlayer.location);
+                if (!gamePlayer.location.edges.w.entered) {
+                    gamePlayer.score -= 2;
+                }
+            }
+            gamePlayer.location = gamePlayer.location.edges.w;
+            gamePlayer.rotation = 270;
+        }
     }
     function movePlayerRight() {
-        console.log("right");
+        if (gamePlayer.location.edges.e) {
+            if (gamePlayer.location.edges.e.inPath) {
+                gameMaze.popFromShortestPath();
+                if (!gamePlayer.location.edges.e.entered) {
+                    gamePlayer.score += 5;
+                }
+            } else {
+                gameMaze.pushToShortestPath(gamePlayer.location);
+                if (!gamePlayer.location.edges.e.entered) {
+                    gamePlayer.score -= 2;
+                }
+            }
+            gamePlayer.location.entered = true;
+            gamePlayer.location = gamePlayer.location.edges.e;
+            gamePlayer.rotation = 90;
+        }
     }
     function movePlayerDown() {
-        console.log("down");
+        if (gamePlayer.location.edges.s) {
+            if (gamePlayer.location.edges.s.inPath) {
+                gameMaze.popFromShortestPath();
+                if (!gamePlayer.location.edges.s.entered) {
+                    gamePlayer.score += 5;
+                }
+            } else {
+                gameMaze.pushToShortestPath(gamePlayer.location);
+                if (!gamePlayer.location.edges.s.entered) {
+                    gamePlayer.score -= 2;
+                }
+            }
+            gamePlayer.location.entered = true;
+            gamePlayer.location = gamePlayer.location.edges.s;
+            gamePlayer.rotation = 180;
+        }
     }
     function movePlayerUp() {
-        console.log("up");
+        if (gamePlayer.location.edges.n) {
+            if (gamePlayer.location.edges.n.inPath) {
+                gameMaze.popFromShortestPath();
+                if (!gamePlayer.location.edges.n.entered) {
+                    gamePlayer.score += 5;
+                }
+            } else {
+                gameMaze.pushToShortestPath(gamePlayer.location);
+                if (!gamePlayer.location.edges.n.entered) {
+                    gamePlayer.score -= 2;
+                }
+            }
+            gamePlayer.location.entered = true;
+            gamePlayer.location = gamePlayer.location.edges.n;
+            gamePlayer.rotation = 0;
+        }
+    }
+    function toggleCrumbs() {
+        Graphics.toggleCrumbs();
+    }
+    function toggleHint() {
+        Graphics.toggleHint();
+    }
+    function togglePath() {
+        Graphics.togglePath();
     }
 
     gameInput.registerCommand('a', movePlayerLeft);
@@ -40,9 +116,28 @@ function GameModel() {
     gameInput.registerCommand('k', movePlayerDown);
     gameInput.registerCommand('ArrowDown', movePlayerDown);
 
+    gameInput.registerCommand('b', toggleCrumbs);
+    gameInput.registerCommand('h', toggleHint);
+    gameInput.registerCommand('p', togglePath);
+
     // Texture declarations
-    let playerIcon = {};
-    let finishIcon = {};
+    let playerIcon = textureMaker({
+        imageSrc: 'images/player_ship.png',
+        center: { x: 0, y: 0 },
+        width: .75,
+        height: .75,
+        rotation: 0
+    });;
+    let finishIcon = textureMaker({
+        imageSrc: 'images/planet.png',
+        center: {
+            x: (Graphics.width),
+            y: (Graphics.height)
+        },
+        width: .75,
+        height: .75,
+        rotation: 0
+    });
     let background = textureMaker({
         imageSrc: 'images/space_background.png',
         center: { x: Graphics.width / 2, y: Graphics.height / 2 },
@@ -52,45 +147,45 @@ function GameModel() {
     });
 
     // Initialize game data and textures
-    that.startNewGame = function (maze, player) {
+    that.startNewGame = function (maze) {
         state = "game";
         gameTime = 0;
         gameMaze = maze;
-        gamePlayer = player;
+        gamePlayer = player({
+            location: gameMaze.getCell(0,0)
+        });
 
         let size = maze.getSize();
         let cellWidth = Graphics.width / size;
         let cellHeight = Graphics.height / size;
 
-        playerIcon = textureMaker({
-            imageSrc: 'images/player_ship.png',
-            center: {
-                x: (gamePlayer.getX() * Graphics.width / size) + (cellWidth / 2),
-                y: (gamePlayer.getY() * Graphics.height / size) + (cellHeight / 2)
-            },
-            width: .75 * cellWidth,
-            height: .75 * cellHeight,
-            rotation: gamePlayer.getRotation()
-        });
+        playerIcon.texture.center.x += (cellWidth / 2);
+        playerIcon.texture.center.y += (cellHeight / 2);
+        playerIcon.texture.width *= cellWidth;
+        playerIcon.texture.height *= cellHeight;
+        playerIcon.texture.rotation = gamePlayer.getRotation();
 
-        finishIcon = textureMaker({
-            imageSrc: 'images/planet.png',
-            center: {
-                x: (Graphics.width) - (cellWidth / 2),
-                y: (Graphics.height) - (cellHeight / 2)
-            },
-            width: .75 * cellWidth,
-            height: .75 * cellHeight,
-            rotation: 0
-        })
+        finishIcon.texture.center.x -= (cellWidth / 2);
+        finishIcon.texture.center.y -= (cellHeight / 2);
+        finishIcon.texture.width *= cellWidth;
+        finishIcon.texture.height *= cellHeight;
     }
 
     // Reset game data (except high scores)
     that.reset = function () {
         state = "menu";
-        gameTime = 0;
-        gamePlayer = {};
-        gameMaze = {};
+        playerIcon.texture.center.x = 0;
+        playerIcon.texture.center.y = 0;
+        playerIcon.texture.width = .75;
+        playerIcon.texture.height = .75;
+        playerIcon.texture.rotation = 0;
+
+        finishIcon.texture.center.x = Graphics.width;
+        finishIcon.texture.center.y = Graphics.height;
+        finishIcon.texture.width = .75;
+        finishIcon.texture.height = .75;
+
+        Graphics.reset();
     }
 
     // game handling functions
@@ -98,25 +193,92 @@ function GameModel() {
         return state;
     }
 
+    that.getHighScores = function () {
+        return highScores;
+    }
+
     // Game loop related functions
     that.processInput = function (elapsedTime) {
-        gameInput.update(elapsedTime)
+        if (state === "game") {
+            gameInput.update(elapsedTime)
+        }
     }
 
     that.update = function (elapsedTime) {
-        gameTime += elapsedTime;
+        if (state === "game") {
+            gameTime += elapsedTime;
+    
+            let size = gameMaze.getSize();
+            let cellWidth = Graphics.width / size;
+            let cellHeight = Graphics.height / size;
+            playerIcon.texture.center.x = (gamePlayer.location.x * cellWidth) + (cellWidth / 2);
+            playerIcon.texture.center.y = (gamePlayer.location.y * cellHeight) + (cellHeight / 2);
+            playerIcon.texture.rotation = gamePlayer.getRotation();
+    
+            if (gamePlayer.location === gameMaze.getCell(size-1, size-1)) {
+                state = "victory"
+                if (gamePlayer.score > highScores[gameMaze.getSize()]) {
+                    highScores[gameMaze.getSize()] = gamePlayer.score;
+                }
+            }
+        }
     }
 
     that.render = function () {
-        if (state === "game") {
+        if (state === "game" || state === "victory") {
             Graphics.clear();
+
             Graphics.Texture(background.texture);
-            Graphics.Maze(gameMaze);
             Graphics.Texture(finishIcon.texture);
+            Graphics.Maze(gameMaze);
             Graphics.Texture(playerIcon.texture);
+
             let timeString = (`${(Math.floor(gameTime / 60000) % 60).toString().padStart(2, "0")}:${(Math.floor(gameTime / 1000) % 60).toString().padStart(2, "0")}`)
             timeDisplay.innerHTML = timeString;
-            scoreDisplay.innerHTML = gamePlayer.getScore();
+            scoreDisplay.innerHTML = gamePlayer.score;
+
+            if (state === "victory") {
+                scoreDisplay.style.color = "greenyellow"
+                timeDisplay.style.color = "greenyellow"
+            } else {
+                scoreDisplay.style.color = "aliceblue"
+                timeDisplay.style.color = "aliceblue"
+            }
+
+            highScoreDisplay.innerHTML = "<h4>High Scores</h4>";
+            if (highScores[5]) {
+                highScoreDisplay.innerHTML += "<p>5 x 5: " + highScores[5] + "</p>";
+            }
+            if (highScores[10]) {
+                highScoreDisplay.innerHTML += "<p>10 x 10: " + highScores[10] + "</p>";
+            }
+            if (highScores[15]) {
+                highScoreDisplay.innerHTML += "<p>15 x 15: " + highScores[15] + "</p>";
+            }
+            if (highScores[20]) {
+                highScoreDisplay.innerHTML += "<p>20 x 20: " + highScores[20] + "</p>";
+            }
+
+            if (state === "victory") {
+                let menuScoresDisplay = document.getElementById('menu-high-scores');
+                menuScoresDisplay.innerHTML = "<h4>High Scores</h4>";
+                if (highScores[5]) {
+                    menuScoresDisplay.innerHTML += "<span>5 x 5: " + highScores[5] + "</span>";
+                }
+                if (highScores[10]) {
+                    menuScoresDisplay.innerHTML += "<span>10 x 10: " + highScores[10] + "</span>";
+                }
+                if (highScores[15]) {
+                    menuScoresDisplay.innerHTML += "<span>15 x 15: " + highScores[15] + "</span>";
+                }
+                if (highScores[20]) {
+                    menuScoresDisplay.innerHTML += "<span>20 x 20: " + highScores[20] + "</span>";
+                }
+                if (menuScoresDisplay.innerHTML == "<h4>High Scores</h4>") {
+                    menuScoresDisplay.innerHTML += "<span>No High Scores Yet</span>"
+                }
+            }
+
         }
     }
 

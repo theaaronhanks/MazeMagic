@@ -13,24 +13,27 @@
             <p>
                 Please select the size of maze you would like to play.
             </p>
-            <button onclick="start(5)">5</button>
-            <button onclick="start(10)">10</button>
-            <button onclick="start(15)">15</button>
-            <button onclick="start(20)">20</button>
+            <button onclick="start(5)">5 x 5</button>
+            <button onclick="start(10)">10 x 10</button>
+            <button onclick="start(15)">15 x 15</button>
+            <button onclick="start(20)">20 x 20</button>
+            <div id="menu-high-scores" class="high-scores">
+                <h4>High Scores</h4>
+                <span>No High Scores Yet</span>
+            </div>
         </div>
 
         <div id="game" class="gameBody hidden">
             <div class="gameBox">
                 <p>Your Score: <span id="score"></span> </p>
                 <p>Time: <span id="time"></span></p>
-                <button id="quit" onclick="reset()">Quit</button>
-                <div id="high-scores">
+                <button id="quit" onclick="reset()">Main Menu</button>
+                <div id="high-scores" class="high-scores">
                     <h4>High Scores</h4>
                 </div>
             </div>
             <div class="mazeBox">
                 <canvas id="id-canvas" width="500" height="500"></canvas>
-
             </div>
             <div class="gameBox">
                 <h4>Shortcuts</h4>
